@@ -4,9 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>전도인 봉사 보고 입력</title>
-<!-- 브라우저 탭 및 모바일 홈 화면 아이콘 설정 -->
+  
+  <!-- 🌟 브라우저 탭 아이콘 설정 (원하실 경우 파일 업로드 후 사용) -->
   <link rel="icon" type="image/png" sizes="32x32" href="./favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+
   <style>
     * {
       box-sizing: border-box;
@@ -225,7 +227,20 @@
   </div>
 
   <script>
-    // ⚠️ 구글 앱스 스크립트 배포 URL로 교체하세요
+    // 🔒 [비밀번호 설정] 원하시는 비밀번호로 변경하세요
+    const SITE_PASSWORD = "1234";
+
+    // 페이지 접속 시 비밀번호 확인 팝업 실행
+    (function checkPassword() {
+      const userPw = prompt("🔒 봉사 보고 입력 페이지\n비밀번호를 입력하세요:");
+      if (userPw !== SITE_PASSWORD) {
+        alert("비밀번호가 일치하지 않습니다.");
+        document.body.innerHTML = "<h2 style='text-align:center; margin-top:100px; color:#c5221f;'>⚠️ 접근이 거부되었습니다.</h2>";
+        throw new Error("Unauthorized");
+      }
+    })();
+
+    // ⚠️ 구글 앱스 스크립트 배포 URL
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6io-66OvkQsyKO1ZxKpy2SOfS_xxQtMTA3xenQijn_eBCW2ZNTR0x_5CM2mx95XtrIQ/exec";
 
     // 페이지 접속 시 대상 월 가져오기
@@ -319,7 +334,6 @@
       btn.innerHTML = '<span class="loading-spinner"></span>저장 중...';
 
       try {
-        // text/plain 방식을 사용하여 CORS Preflight 차단 우회
         const response = await fetch(SCRIPT_URL, {
           method: "POST",
           body: JSON.stringify(formData),
