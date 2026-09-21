@@ -4,11 +4,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>전도인 봉사 보고 입력</title>
-  
-  <!-- 🌟 브라우저 탭 아이콘 설정 (원하실 경우 파일 업로드 후 사용) -->
-  <link rel="icon" type="image/png" sizes="32x32" href="./favicon.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
-
   <style>
     * {
       box-sizing: border-box;
@@ -24,6 +19,69 @@
       max-width: 500px;
       margin: 0 auto;
     }
+    /* 비밀번호 입력 화면 스타일 */
+    #authOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #f8f9fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .auth-card {
+      background: #fff;
+      padding: 30px 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 380px;
+      text-align: center;
+    }
+    .auth-card h3 {
+      margin-top: 0;
+      color: #202124;
+      font-size: 20px;
+    }
+    .auth-card p {
+      font-size: 13px;
+      color: #5f6368;
+      margin-bottom: 20px;
+    }
+    .auth-card input {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid #dadce0;
+      border-radius: 6px;
+      font-size: 15px;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .auth-card button {
+      width: 100%;
+      padding: 11px;
+      background-color: #1a73e8;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .auth-card button:hover {
+      background-color: #1557b0;
+    }
+    .auth-error {
+      color: #c5221f;
+      font-size: 12px;
+      margin-top: 10px;
+      display: none;
+    }
+
+    /* 기존 보고 입력 폼 스타일 */
     .form-header {
       margin-bottom: 18px;
       padding-bottom: 12px;
@@ -38,7 +96,6 @@
       padding: 4px 10px;
       border-radius: 20px;
       margin-bottom: 6px;
-      letter-spacing: -0.2px;
       box-shadow: 0 2px 4px rgba(26,115,232,0.25);
     }
     .form-header h2 {
@@ -68,7 +125,6 @@
       border-radius: 6px;
       font-size: 14px;
       background-color: #fff;
-      transition: border-color 0.2s, background-color 0.2s;
     }
     select:focus, input:focus, textarea:focus {
       outline: none;
@@ -124,7 +180,6 @@
       font-weight: 600;
       cursor: pointer;
       margin-top: 10px;
-      transition: background-color 0.2s;
     }
     .btn-submit:hover {
       background-color: #1557b0;
@@ -168,6 +223,17 @@
   </style>
 </head>
 <body>
+
+  <!-- 🔒 브라우저 주소 표시가 없는 깔끔한 비밀번호 입력 창 -->
+  <div id="authOverlay">
+    <div class="auth-card">
+      <h3>🔒 본인 확인</h3>
+      <p>봉사 보고 입력 페이지입니다.<br>비밀번호를 입력해 주세요.</p>
+      <input type="password" id="sitePassword" placeholder="비밀번호" onkeydown="if(event.key==='Enter') verifyPassword()">
+      <button onclick="verifyPassword()">확인</button>
+      <div id="authError" class="auth-error">비밀번호가 올바르지 않습니다.</div>
+    </div>
+  </div>
 
   <div class="container">
     <div class="form-header">
@@ -228,17 +294,26 @@
 
   <script>
     // 🔒 [비밀번호 설정] 원하시는 비밀번호로 변경하세요
-    const SITE_PASSWORD = "1935";
+    const SITE_PASSWORD = "1234";
 
-    // 페이지 접속 시 비밀번호 확인 팝업 실행
-    (function checkPassword() {
-      const userPw = prompt("🔒 봉사 보고 입력 페이지\n비밀번호를 입력하세요:");
-      if (userPw !== SITE_PASSWORD) {
-        alert("비밀번호가 일치하지 않습니다.");
-        document.body.innerHTML = "<h2 style='text-align:center; margin-top:100px; color:#c5221f;'>⚠️ 접근이 거부되었습니다.</h2>";
-        throw new Error("Unauthorized");
+    function verifyPassword() {
+      const userPw = document.getElementById('sitePassword').value;
+      const errorDiv = document.getElementById('authError');
+
+      if (userPw === SITE_PASSWORD) {
+        // 비밀번호가 맞으면 암호창을 부드럽게 숨김
+        document.getElementById('authOverlay').style.display = 'none';
+      } else {
+        errorDiv.style.display = 'block';
+        document.getElementById('sitePassword').value = '';
+        document.getElementById('sitePassword').focus();
       }
-    })();
+    }
+
+    // 페이지 로드 시 비밀번호 입력칸에 자동 포커스
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('sitePassword').focus();
+    });
 
     // ⚠️ 구글 앱스 스크립트 배포 URL
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6io-66OvkQsyKO1ZxKpy2SOfS_xxQtMTA3xenQijn_eBCW2ZNTR0x_5CM2mx95XtrIQ/exec";
